@@ -1,3 +1,7 @@
+module MoziFESection
+export BeamSection
+export RectangleSection,HSection,ISection,BoxSection,PipeSection,CircleSection
+
 struct BeamSection
     id::String
     hid::Int
@@ -124,4 +128,4 @@ function CircleSection(id,hid,d)::BeamSection
     BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,Enums.CIRCLE,[d])
 end
 
-# end
+end
