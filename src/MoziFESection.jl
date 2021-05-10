@@ -2,6 +2,16 @@ module MoziFESection
 export BeamSection
 export RectangleSection,HSection,ISection,BoxSection,PipeSection,CircleSection
 
+@enum SectionType begin
+    GENERAL_SECTION=0
+    ISECTION=1
+    HSECTION=2
+    BOX=3
+    PIPE=4
+    CIRCLE=5
+    RECTANGLE=6
+end
+
 struct BeamSection
     id::String
     hid::Int
@@ -37,7 +47,7 @@ function RectangleSection(id,hid,h,b)::BeamSection
     W₃=I₃/h*2
     W₂=I₂/b*2
 
-    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,Enums.RECTANGLE,[h,b])
+    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,RECTANGLE,[h,b])
 end
 
 
@@ -52,7 +62,7 @@ function HSection(id,hid,h,b,tw,tf)::BeamSection
     As₃=2*b*tf#wrong
     W₃=I₃/h*2
     W₂=I₂/b*2
-    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,Enums.HSECTION,[h,b,tw,tf])
+    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,HSECTION,[h,b,tw,tf])
 end
 
 function ISection(id,hid,h,b1,b2,tw,tf1,tf2)::BeamSection
@@ -76,7 +86,7 @@ function ISection(id,hid,h,b1,b2,tw,tf1,tf2)::BeamSection
     W₃=I₃/max(y0,h-y0)
     W₂=I₂/max(b1/2,b2/2)
 
-    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,Enums.I_SECTION,[h,b1,b2,tw,tf1,tf2])
+    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,I_SECTION,[h,b1,b2,tw,tf1,tf2])
 end
 
 
@@ -92,7 +102,7 @@ function BoxSection(id,hid,h,b,tw,tf)::BeamSection
     As₃=2*b*tf#wrong
     W₃=I₃/h*2
     W₂=I₂/b*2
-    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,Enums.BOX,[h,b,tw,tf])
+    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,BOX,[h,b,tw,tf])
 end
 
 function PipeSection(id,hid,d,t)::BeamSection
@@ -109,7 +119,7 @@ function PipeSection(id,hid,d,t)::BeamSection
     W₂=W₃
     r=d/2
     J=2/3*π*r*t^3
-    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,Enums.PIPE,[d,t])
+    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,PIPE,[d,t])
 end
 
 function CircleSection(id,hid,d)::BeamSection
@@ -125,7 +135,7 @@ function CircleSection(id,hid,d)::BeamSection
     W₃=I₃/d*2
     W₂=W₃
     J=π*d^4/32
-    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,Enums.CIRCLE,[d])
+    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,CIRCLE,[d])
 end
 
 end
