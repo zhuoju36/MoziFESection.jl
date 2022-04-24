@@ -3,13 +3,15 @@ export BeamSection
 export RectangleSection,HSection,ISection,BoxSection,PipeSection,CircleSection
 
 @enum SectionType begin
-    RECTANGLE
-    HSECTION
-    I_SECTION
-    BOX
-    PIPE
-    CIRCLE
+    GENERAL_SECTION=0
+    ISECTION=1
+    HSECTION=2
+    BOX=3
+    PIPE=4
+    CIRCLE=5
+    RECTANGLE=6
 end
+
 struct BeamSection
     id::String
     hid::Int
