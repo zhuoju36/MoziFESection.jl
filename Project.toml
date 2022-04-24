@@ -2,3 +2,6 @@ name = "MoziFESection"
 uuid = "14b8622a-036d-4d33-8a6e-103eec319ccf"
 authors = ["HZJ <zhuoju36@hotmail.com>"]
 version = "0.1.0"
+
+[compat]
+julia = "1"

@@ -2,4 +2,4 @@
 
 This is a part of Project Mozi
 
-This package provides section properties for FEM module of the project.
+This package provides convenient calculation of section properties of the project.
