@@ -41,8 +41,8 @@ function RectangleSection(id,hid,h,b)::BeamSection
 
     # bb,aa=sort([h,b])
     # J=aa*bb^3*(1/3-0.21*bb/aa*(1-bb^4/12/aa^4))
-    β = MembraneMeta(h, b);
-    J = h * b * b * b * β;
+    β = MembraneMeta(h, b)
+    J = h * b * b * b * β
 
     As₂=5.0 / 6 * h * b
     As₃=5.0 / 6 * h * b
@@ -65,8 +65,8 @@ function HSection(id,hid,h,b,tw,tf)::BeamSection
 
     I₃=b*h^3/12-(b-tw)*(h-2*tf)^3/12
     I₂=2*tf*b^3/12+(h-2*tf)*tw^3/12
-    As₂=tw * h;
-    As₃=5.0 / 3 * tf * b;
+    As₂=tw * h
+    As₃=5.0 / 3 * tf * b
     W₃=I₃/h*2
     W₂=I₂/b*2
     BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,SectionType.HSECTION,[h,b,tw,tf])
@@ -91,8 +91,8 @@ function ISection(id,hid,h,b1,b2,tw,tf1,tf2)::BeamSection
 
     I₂=b1^3*tf1/12+b2^3*tf2/12+tw^3*hw/12
 
-    As₂=tw * h;
-    As₃=5.0 / 6 * tf1 * b+5.0 / 6 * tf2 * b;
+    As₂=tw * h
+    As₃=5.0 / 6 * tf1 * b+5.0 / 6 * tf2 * b
     W₃=I₃/max(y0,h-y0)
     W₂=I₂/max(b1/2,b2/2)
 
@@ -104,12 +104,17 @@ function BoxSection(id,hid,h,b,tw,tf)::BeamSection
     id=string(id)
 
     A=h*b-(h-2*tf)*(b-2*tw)
-    J=(2*tw*(h-tf)/tw+2*tf*(b-tw)/tf)*2*A
+    
+    a = 2 * ((b - tw) / tf + (h - tf) / tw)
+    Ω= 2 * (h - tf) * (b - tw)
+    c=Ω/a
+    J=c*Ω
+    
     I₃=b*h^3/12-(b-2*tw)*(h-2*tf)^3/12
     I₂=h*b^3/12-(h-2*tf)*(b-2*tw)^3/12
 
-    As₂=2 * tw * h;
-    As₃=2 * tf * b;
+    As₂=2 * tw * h
+    As₃=2 * tf * b
     W₃=I₃/h*2
     W₂=I₂/b*2
     BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,SectionType.BOX,[h,b,tw,tf])
@@ -128,7 +133,7 @@ function PipeSection(id,hid,d,t)::BeamSection
     W₃=I₃/d*2
     W₂=W₃
     r=d/2
-    J=2/3*π*r*t^3
+    J=π/32*(d^4-(d-2t)^4)
     BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,SectionType.PIPE,[d,t])
 end
 
@@ -149,13 +154,13 @@ function CircleSection(id,hid,d)::BeamSection
 end
 
 function MembraneMeta(h, b)
-    s = 0;
+    s = 0
     for i in 1:30
-        m = 1.0 + 2 * i;
-        s += tanh(m * π * h / 2 / b) / m^5;
+        m = 1.0 + 2 * i
+        s += tanh(m * π * h / 2 / b) / m^5
     end
-    β = 1.0 / 3 - b / (π^5 * h) * s;
-    return β;
+    β = 1.0 / 3 - b / (π^5 * h) * s
+    return β
 end
 
 end
