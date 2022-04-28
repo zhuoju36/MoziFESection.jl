@@ -25,7 +25,7 @@ struct BeamSection
     W₃::Float64
     sec_type::SectionType
     sizes::Vector
-    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,sec_type=SectionType(0),sizes=[])=new(string(id),hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,sec_type,sizes)
+    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,sec_type=GENERAL_SECTION,sizes=[])=new(string(id),hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,sec_type,sizes)
 end
 
 # function BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃)
@@ -49,7 +49,7 @@ function RectangleSection(id,hid,h,b)::BeamSection
     W₃=I₃/h*2
     W₂=I₂/b*2
 
-    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,SectionType.RECTANGLE,[h,b])
+    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,RECTANGLE,[h,b])
 end
 
 
@@ -58,7 +58,7 @@ function HSection(id,hid,h,b,tw,tf)::BeamSection
 
     A=b*tf*2+tw*(h-2*tf)
 
-    β=MembraneMeta(tw, h - 2 * tf)
+    β=MembraneMeta(tf, b)
     J=tf * b * b * b * β * 2
     β = MembraneMeta(tw, h - 2 * tf)
     J+=tw * (h - 2 * tf)^3 * β
@@ -69,7 +69,7 @@ function HSection(id,hid,h,b,tw,tf)::BeamSection
     As₃=5.0 / 3 * tf * b
     W₃=I₃/h*2
     W₂=I₂/b*2
-    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,SectionType.HSECTION,[h,b,tw,tf])
+    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,HSECTION,[h,b,tw,tf])
 end
 
 function ISection(id,hid,h,b1,b2,tw,tf1,tf2)::BeamSection
@@ -79,10 +79,12 @@ function ISection(id,hid,h,b1,b2,tw,tf1,tf2)::BeamSection
     A=b1*tf1+b2*tf2+tw*hw
     y0=(b1*tf1*(h-tf1/2)+b2*tf2*tf2/2+hw*tw*(hw/2+tf2))/A
 
-    β=MembraneMeta(tw, h - 2 * tf)
-    J=tf1 * b * b * b * β +tf2 * b * b * b * β
-    β = MembraneMeta(tw, h - 2 * tf)
-    J+=tw * (h - 2 * tf)^3 * β
+    β=MembraneMeta(tf1, b1)
+    J=tf1 * b1^3 * β
+    β=MembraneMeta(tf2, b2)
+    J+=tf2 * b2^3* β
+    β = MembraneMeta(tw, h - tf1 - tf2)
+    J+=tw * (h - tf1 - tf2)^3 * β
 
     I₃=tw*hw^3/12
     I₃+=b1*tf1^3/12+b1*tf1*(hw/2+tf1/2)^2
@@ -92,11 +94,11 @@ function ISection(id,hid,h,b1,b2,tw,tf1,tf2)::BeamSection
     I₂=b1^3*tf1/12+b2^3*tf2/12+tw^3*hw/12
 
     As₂=tw * h
-    As₃=5.0 / 6 * tf1 * b+5.0 / 6 * tf2 * b
+    As₃=5.0 / 6 * tf1 * b1 + 5.0 / 6 * tf2 * b2
     W₃=I₃/max(y0,h-y0)
     W₂=I₂/max(b1/2,b2/2)
 
-    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,SectionType.I_SECTION,[h,b1,b2,tw,tf1,tf2])
+    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,ISECTION,[h,b1,b2,tw,tf1,tf2])
 end
 
 
@@ -117,7 +119,7 @@ function BoxSection(id,hid,h,b,tw,tf)::BeamSection
     As₃=2 * tf * b
     W₃=I₃/h*2
     W₂=I₂/b*2
-    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,SectionType.BOX,[h,b,tw,tf])
+    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,BOX,[h,b,tw,tf])
 end
 
 function PipeSection(id,hid,d,t)::BeamSection
@@ -134,7 +136,7 @@ function PipeSection(id,hid,d,t)::BeamSection
     W₂=W₃
     r=d/2
     J=π/32*(d^4-(d-2t)^4)
-    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,SectionType.PIPE,[d,t])
+    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,PIPE,[d,t])
 end
 
 function CircleSection(id,hid,d)::BeamSection
@@ -150,7 +152,7 @@ function CircleSection(id,hid,d)::BeamSection
     W₃=I₃/d*2
     W₂=W₃
     J=π*d^4/32
-    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,SectionType.CIRCLE,[d])
+    BeamSection(id,hid,A,I₂,I₃,J,As₂,As₃,W₂,W₃,CIRCLE,[d])
 end
 
 function MembraneMeta(h, b)
